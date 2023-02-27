@@ -27,6 +27,11 @@
             <artifactId>telegrambots-spring-boot-starter</artifactId>
             <version>${telegram.starter.version}</version>
         </dependency>
+        <dependency>
+            <groupId>me.t.dataswapshopbot</groupId>
+            <artifactId>common-rabbitmq</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
 </project>
