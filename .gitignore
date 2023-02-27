@@ -1,7 +1,11 @@
 # Project exclude paths
 .idea
 logs
+
 /dispatcher/target/
 /common-rabbitmq/target/
+/node/target/
+
 /dispatcher/src/main/resources/application.properties
 /common-rabbitmq/src/main/resources/application.properties
+/node/src/main/resources/application.properties

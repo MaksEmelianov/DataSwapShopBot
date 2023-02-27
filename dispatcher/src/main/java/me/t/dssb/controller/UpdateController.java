@@ -86,6 +86,11 @@ public class UpdateController {
         setView(sendMessage);
     }
 
+    private void processAnswerMessage(Update update) {
+        updateProducer.produce(RabbitQueue.ANSWERS_QUEUE, update);
+        setFileReceivedView(update);
+    }
+
     private void processDocumentMessage(Update update) {
         updateProducer.produce(RabbitQueue.DOC_QUEUE, update);
         setFileReceivedView(update);
