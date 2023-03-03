@@ -55,18 +55,18 @@ public class UpdateController {
      */
     private void distributeMessagesByType(Update update) {
         Message message = update.getMessage();
-        if (message.getText() != null) {
+        if (message.hasText()) {
             processTextMessage(update);
-        } else if (message.getPhoto()!= null) {
+        } else if (message.hasPhoto()) {
             processPhotoMessage(update);
-        } else if (message.getDocument()!= null) {
+        } else if (message.hasDocument()) {
             processDocumentMessage(update);
         } else {
             setUnsupportedMessageTypeView(update);
         }
     }
 
-    private void setView(SendMessage message) {
+    public void setView(SendMessage message) {
         telegramBot.sendMessage(message);
     }
 
@@ -84,11 +84,6 @@ public class UpdateController {
                 "File processed"
         );
         setView(sendMessage);
-    }
-
-    private void processAnswerMessage(Update update) {
-        updateProducer.produce(RabbitQueue.ANSWERS_QUEUE, update);
-        setFileReceivedView(update);
     }
 
     private void processDocumentMessage(Update update) {
