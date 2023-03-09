@@ -11,7 +11,7 @@ import static me.t.dssb.model.RabbitQueue.ANSWERS_QUEUE;
 @Service
 public class ProducerServiceImpl implements ProducerService {
 
-    private RabbitTemplate rabbitTemplate;
+    private final RabbitTemplate rabbitTemplate;
 
     @Autowired
     public ProducerServiceImpl(RabbitTemplate rabbitTemplate) {

@@ -22,6 +22,6 @@ public class AnswerConsumerImpl implements AnswerConsumer {
     @Override
     @RabbitListener(queues = ANSWERS_QUEUE)
     public void consume(SendMessage sendMessage) {
-        updateController.setView(sendMessage);
+        updateController.setAnswer(sendMessage);
     }
 }

@@ -66,7 +66,7 @@ public class UpdateController {
         }
     }
 
-    public void setView(SendMessage message) {
+    public void setAnswer(SendMessage message) {
         telegramBot.sendMessage(message);
     }
 
@@ -75,29 +75,29 @@ public class UpdateController {
                 update,
                 "Unsupported Message Type"
         );
-        setView(sendMessage);
+        setAnswer(sendMessage);
     }
 
-    private void setFileReceivedView(Update update) {
-        SendMessage sendMessage = messageUtils.generateSendMessageWithText(
-                update,
-                "File processed"
-        );
-        setView(sendMessage);
-    }
+//    private void setFileReceivedView(Update update) {
+//        SendMessage sendMessage = messageUtils.generateSendMessageWithText(
+//                update,
+//                "File processed"
+//        );
+//        setAnswer(sendMessage);
+//    }
 
     private void processDocumentMessage(Update update) {
         updateProducer.produce(RabbitQueue.DOC_QUEUE, update);
-        setFileReceivedView(update);
+//        setFileReceivedView(update);
     }
 
     private void processPhotoMessage(Update update) {
         updateProducer.produce(RabbitQueue.PHOTO_QUEUE, update);
-        setFileReceivedView(update);
+//        setFileReceivedView(update);
     }
 
     private void processTextMessage(Update update) {
         updateProducer.produce(RabbitQueue.TEXT_QUEUE, update);
-        setFileReceivedView(update);
+//        setFileReceivedView(update);
     }
 }
