@@ -10,6 +10,8 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+import static me.t.dssb.model.RabbitQueue.*;
+
 @Log4j
 @Component
 public class UpdateController {
@@ -17,87 +19,68 @@ public class UpdateController {
     private final MessageUtils messageUtils;
     private final UpdateProducer updateProducer;
 
-    @Autowired
     public UpdateController(MessageUtils messageUtils, UpdateProducer updateProducer) {
         this.messageUtils = messageUtils;
         this.updateProducer = updateProducer;
     }
 
-    /**
-     * Регистрация телеграм бота, внедрить бин нельзя из-за циклической зависимости
-     * Можно заменить на сеттер и в самом классе убрать init()
-     * @param telegramBot
-     */
-    public void register(TelegramBot telegramBot) {
+    public void registerBot(TelegramBot telegramBot) {
         this.telegramBot = telegramBot;
     }
 
-    /**
-     * Проверка типа сообщения
-     * @param update
-     */
     public void processUpdate(Update update) {
         if (update == null) {
-            log.error("Update is null");
+            log.error("Received update is null");
             return;
         }
-        if (update.getMessage() != null) {
+
+        if (update.hasMessage()) {
             distributeMessagesByType(update);
         } else {
-            log.error("Received unsupported message type " + update.getMessage());
+            log.error("Unsupported message type is received: " + update);
         }
     }
 
-    /**
-     * Распределение сообщений по типу для брокера сообщений
-     * Документ, фото, текст
-     * @param update
-     */
     private void distributeMessagesByType(Update update) {
-        Message message = update.getMessage();
+        var message = update.getMessage();
         if (message.hasText()) {
             processTextMessage(update);
+        } else if (message.hasDocument()) {
+            processDocMessage(update);
         } else if (message.hasPhoto()) {
             processPhotoMessage(update);
-        } else if (message.hasDocument()) {
-            processDocumentMessage(update);
         } else {
             setUnsupportedMessageTypeView(update);
         }
     }
 
-    public void setAnswer(SendMessage message) {
-        telegramBot.sendMessage(message);
-    }
-
     private void setUnsupportedMessageTypeView(Update update) {
-        SendMessage sendMessage = messageUtils.generateSendMessageWithText(
-                update,
-                "Unsupported Message Type"
-        );
-        setAnswer(sendMessage);
+        var sendMessage = messageUtils.generateSendMessageWithText(update,
+                "Неподдерживаемый тип сообщения!");
+        setView(sendMessage);
     }
 
-//    private void setFileReceivedView(Update update) {
-//        SendMessage sendMessage = messageUtils.generateSendMessageWithText(
-//                update,
-//                "File processed"
-//        );
-//        setAnswer(sendMessage);
-//    }
+    private void setFileIsReceivedView(Update update) {
+        var sendMessage = messageUtils.generateSendMessageWithText(update,
+                "Файл получен! Обрабатывается...");
+        setView(sendMessage);
+    }
 
-    private void processDocumentMessage(Update update) {
-        updateProducer.produce(RabbitQueue.DOC_QUEUE, update);
-//        setFileReceivedView(update);
+    public void setView(SendMessage sendMessage) {
+        telegramBot.sendAnswerMessage(sendMessage);
     }
 
     private void processPhotoMessage(Update update) {
-        updateProducer.produce(RabbitQueue.PHOTO_QUEUE, update);
-//        setFileReceivedView(update);
+        updateProducer.produce(PHOTO_QUEUE, update);
+        setFileIsReceivedView(update);
+    }
+
+    private void processDocMessage(Update update) {
+        updateProducer.produce(DOC_QUEUE, update);
+        setFileIsReceivedView(update);
     }
 
     private void processTextMessage(Update update) {
-        updateProducer.produce(RabbitQueue.TEXT_QUEUE, update);
-//        setFileReceivedView(update);
+        updateProducer.produce(TEXT_QUEUE, update);
     }
 }

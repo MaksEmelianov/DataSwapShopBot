@@ -2,13 +2,18 @@
 .idea
 logs
 text.txt
+*.iml
 
-/dispatcher/target/
-/common-rabbitmq/target/
 /common-jpa/target/
+/common-rabbitmq/target/
+/common-utils/target/
+/dispatcher/target/
+/mail-service/target/
 /node/target/
+/rest-service/target
 
-/dispatcher/src/main/resources/application.properties
-/common-rabbitmq/src/main/resources/application.properties
 /common-jpa/src/main/resources/application.properties
+/common-rabbitmq/src/main/resources/application.properties
+/dispatcher/src/main/resources/application.properties
 /node/src/main/resources/application.properties
+/rest-service/src/main/resources/application.properties
